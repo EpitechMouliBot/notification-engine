@@ -1,0 +1,19 @@
+{
+  "name": "notification-engine",
+  "version": "1.0.0",
+  "description": "Engine to handle notification by e-mail, discord, sms, and more",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "npm src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/EpitechMouliBot/notification-engine.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/EpitechMouliBot/notification-engine/issues"
+  },
+  "homepage": "https://github.com/EpitechMouliBot/notification-engine#readme"
+}
