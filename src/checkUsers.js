@@ -1,5 +1,5 @@
 import { sendAPICall } from "./apiCall.js";
-import { handleNotification } from "./handleNotification.js";
+import { handleNotification } from "./notification/handler.js";
 
 function getLastTestData(data) {
     if (data.length < 1)
