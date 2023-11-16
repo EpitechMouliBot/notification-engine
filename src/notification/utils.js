@@ -1,7 +1,11 @@
+export function is_num(id) {
+    return (/^\d+$/.test(id));
+}
+
 export function getPercentColor(percentPassed) {
     try {
-        if (typeof(percentPassed) !== int)
-            percentPassed = parseInt(percentPassed);
+        if (is_num(percentPassed) === false)
+            return 'white';
         if (percentPassed > 75) {
             return 'green';
         } else if (percentPassed > 25) {
@@ -11,4 +15,8 @@ export function getPercentColor(percentPassed) {
     } catch (error) {
         return 'white';
     }
+}
+
+export function checkEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
 }

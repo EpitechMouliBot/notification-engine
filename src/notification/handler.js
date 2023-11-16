@@ -1,7 +1,10 @@
 import { sendAPICall } from "../apiCall.js";
+import { checkEmail } from "./utils.js";
 
 function sendEmail(email, lastTestRunData) {
-    
+    if (!email || checkEmail(email) === false)
+        return;
+    console.log("send email: ", lastTestRunData)
 }
 
 export async function handleNotification(userData, lastTestRunData) {
