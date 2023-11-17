@@ -3,8 +3,6 @@ import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
 dotenv.config();
 
-import { getPercentColor } from './utils.js';
-
 class EmailSender {
     constructor() {
         this.transporter = nodemailer.createTransport({
@@ -18,9 +16,7 @@ class EmailSender {
         });
     }
 
-    sendEmail(toMail, percentPassed, url, projectName, statusContent, normeContent) {
-        const percentColor = getPercentColor(percentPassed);
-
+    sendEmail(toMail, percentPassed, percentColor, url, projectName, statusContent, normeContent) {
         const emailContent = `
     <html>
     <head>
