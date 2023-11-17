@@ -33,6 +33,29 @@ function sendPushNotification(phoneTopic, data) {
     }
 }
 
+function fillDataObject(lastTestRunData, year) {
+    let data = {
+        "project_slug": lastTestRunData['data']['project']['slug'],
+        "project_name": lastTestRunData['data']['project']['name'],
+        "project_skills": lastTestRunData['data']['project']['skills'],
+        "code_module": lastTestRunData['data']['project']['module']['code'],
+        "logins": lastTestRunData['data']['results']['logins'],
+        "prerequisites": lastTestRunData['data']['results']['prerequisites'],
+        "externalItems": lastTestRunData['data']['results']['externalItems'],
+        "mandatoryFailed": lastTestRunData['data']['results']['mandatoryFailed'],
+        "result_skills": lastTestRunData['data']['results']['skills'],
+        "testRunId": lastTestRunData['data']['results']['testRunId'],
+        "date": lastTestRunData['data']['date']
+    }
+
+    data['skills_percent'] = calculateSkillsPercent(data['result_skills']);
+    data['skills_color'] = getPercentColor(data['skills_percent']);
+    data['formated_url'] = getCompleteUrl(data['code_module'], data['project_slug'], data['testRunId'], year);
+    data['formated_status'] = getCompleteStatus(data['externalItems'], '<br>');
+    data['formated_norme'] = getCompleteNorme(data['externalItems'], '<br>');
+    return data;
+}
+
 export async function handleNotification(instances, userData, lastTestRunData, year) {
     try {
         // sendAPICall('PUT', `/user/id/${userInfo['id']}`, process.env.API_DB_TOKEN, {
@@ -41,33 +64,16 @@ export async function handleNotification(instances, userData, lastTestRunData, y
         //     console.log(err);
         // });
 
-        let data = {
-            "project_slug": lastTestRunData['data']['project']['slug'],
-            "project_name": lastTestRunData['data']['project']['name'],
-            "project_skills": lastTestRunData['data']['project']['skills'],
-            "code_module": lastTestRunData['data']['project']['module']['code'],
-            "logins": lastTestRunData['data']['results']['logins'],
-            "prerequisites": lastTestRunData['data']['results']['prerequisites'],
-            "externalItems": lastTestRunData['data']['results']['externalItems'],
-            "mandatoryFailed": lastTestRunData['data']['results']['mandatoryFailed'],
-            "result_skills": lastTestRunData['data']['results']['skills'],
-            "testRunId": lastTestRunData['data']['results']['testRunId'],
-            "date": lastTestRunData['data']['date']
-        }
-
-        data['skills_percent'] = calculateSkillsPercent(data['result_skills']);
-        data['skills_color'] = getPercentColor(data['skills_percent']);
-        data['formated_url'] = getCompleteUrl(data['code_module'], data['project_slug'], data['testRunId'], year);
-        data['formated_status'] = getCompleteStatus(data['externalItems'], '<br>');
-        data['formated_norme'] = getCompleteNorme(data['externalItems'], '<br>');
+        let data = fillDataObject(lastTestRunData, year);
 
         if (userData['email_status'] === 1)
-            sendEmail(instances['email'], userData['email'], data); // check if email is not undefined
+            sendEmail(instances['email'], userData['email'], data);
+
         data['formated_status'] = getCompleteStatus(data['externalItems'], '\n');
         data['formated_norme'] = getCompleteNorme(data['externalItems'], '\n');
 
         if (userData['phone_status'] === 1)
-            sendPushNotification(userData['phone_topic'], data); // check if phone number is not undefined
+            sendPushNotification(userData['phone_topic'], data);
         // if (userData['discord_status'] === 1)
         //     sendDiscord(userData['channel_id'], userData['user_id'], lastTestRunData); // check if channel_id and user_id are not undefined
         // if (userData['telegram_status'] === 1)
