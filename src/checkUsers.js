@@ -1,4 +1,4 @@
-import { sendAPICall } from "./apiCall.js";
+import { sendAPICall, sendRELAYCall } from "./apiCall.js";
 import { handleNotification } from "./notification/handler.js";
 
 function getLastTestData(data) {
@@ -13,34 +13,34 @@ function getLastTestData(data) {
     }
 }
 
-async function checkForOneUser(userData, year) {
-    sendAPICall("GET", `/${userData['email']}/epitest/me/${year}`)
+async function checkForOneUser(instances, userData, year) {
+    await sendRELAYCall("GET", `/${userData['email']}/epitest/me/${year}`)
         .then(async (rsp) => {
             const relayData = rsp.data;
             const actualYear = new Date().getFullYear();
 
             if (!relayData || (relayData.length < 1 && year >= actualYear - 6))
-                checkForOneUser(userData, year - 1);
+                await checkForOneUser(userData, year - 1);
 
-            const lastTestRunData = getLastTestRunID(relayData);
+            const lastTestRunData = getLastTestData(relayData);
             if (!lastTestRunData || lastTestRunData.id === 0 || !lastTestRunData.data ||
                 (userData['last_testRunId'] && lastTestRunData.id === userData['last_testRunId']))
                 return;
-            await handleNotification(userData, lastTestRunData);
+            await handleNotification(instances, userData, lastTestRunData, year);
         }
         ).catch((err) => {
             console.log(err);
         });
 }
 
-export async function checkUsersNotifications() {
-    let count = 0;
+export async function checkUsersNotifications(instances) {
     const actualYear = new Date().getFullYear();
+
     sendAPICall("GET", "/user/status/ok", process.env.API_DB_TOKEN)
         .then(async (rsp) => {
             const userList = rsp.data;
             for (let i = 0; i < userList.length; ++i) {
-                checkForOneUser(userList[i], actualYear);
+                await checkForOneUser(instances, userList[i], actualYear);
             }
         }).catch((err) => {
             console.log(err);
