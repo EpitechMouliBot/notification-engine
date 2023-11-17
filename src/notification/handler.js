@@ -68,25 +68,24 @@ function fillDataObject(lastTestRunData, year) {
 
 export async function handleNotification(instances, userData, lastTestRunData, year) {
     try {
-        // sendAPICall('PUT', `/user/id/${userInfo['id']}`, process.env.API_DB_TOKEN, {
-        //     'last_testRunId': lastTestRunData.id,
-        // }).catch((err) => {
-        //     console.log(err);
-        // });
+        sendAPICall('PUT', `/user/id/${userInfo['id']}`, process.env.API_DB_TOKEN, {
+            'last_testRunId': lastTestRunData.id,
+        }).catch((err) => {
+            console.log(err);
+        });
 
         let data = fillDataObject(lastTestRunData, year);
 
-        // if (userData['email_status'] === 1)
-        //     sendEmail(instances['email'], userData['email'], data);
+        if (userData['email_status'] === 1)
+            sendEmail(instances['email'], userData['email'], data);
 
         data['formated_status'] = getCompleteStatus(data['externalItems'], '\n');
         data['formated_norme'] = getCompleteNorme(data['externalItems'], '\n');
 
-        // if (userData['phone_status'] === 1)
-        //     sendPushNotification(userData['phone_topic'], data);
-        // if (userData['discord_status'] === 1)
-        await sendDiscord(instances['discord'], userData['channel_id'], userData['user_id'], data);
-        // await sendDiscord(instances['discord'], userData['channel_id'], userData['user_id'], data);
+        if (userData['phone_status'] === 1)
+            sendPushNotification(userData['phone_topic'], data);
+        if (userData['discord_status'] === 1)
+        await sendDiscord(instances['discord'], userData['discord_channel_id'], userData['discord_user_id'], data);
     } catch (err) {
         console.log(err);
     }

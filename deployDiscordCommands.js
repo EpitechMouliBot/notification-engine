@@ -1,11 +1,8 @@
-import dotenv from 'dotenv';
-dotenv.config();
 import { REST, Routes } from 'discord.js';
 import * as fs from 'node:fs';
-import { loadConfigJson } from './src/utils/global.js';
 
-const config = await loadConfigJson();
-
+import dotenv from 'dotenv';
+dotenv.config();
 
 const token = process.env.DISCORD_BOT_TOKEN;
 const clientId = process.env.CLIENT_ID;
