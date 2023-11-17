@@ -1,5 +1,6 @@
 import { sendAPICall } from "../apiCall.js";
 import { sendNTFYCall } from "./push.js";
+import { sendDiscordNotification } from "./discord.js";
 import { calculateSkillsPercent, getCompleteNorme, getCompleteStatus, getCompleteUrl, getPercentColor } from "./getInformations.js";
 import { checkEmail } from "./utils.js";
 
@@ -23,13 +24,22 @@ function sendEmail(emailInstance, email, data) {
     }
 }
 
-
 function sendPushNotification(phoneTopic, data) {
     try {
         sendNTFYCall(phoneTopic, data['formated_url'], data['project_name'], data['skills_percent']);
         console.log('Push notification sent');
     } catch (error) {
         console.error('Error when sending sms:', error);
+    }
+}
+
+async function sendDiscord(discordInstance, channelId, userId, data) {
+    if (!channelId || !userId)
+        return;
+    try {
+        await sendDiscordNotification(discordInstance, channelId, userId, data);
+    } catch (error) {
+        console.error('Error when sending discord:', error);
     }
 }
 
@@ -45,7 +55,7 @@ function fillDataObject(lastTestRunData, year) {
         "mandatoryFailed": lastTestRunData['data']['results']['mandatoryFailed'],
         "result_skills": lastTestRunData['data']['results']['skills'],
         "testRunId": lastTestRunData['data']['results']['testRunId'],
-        "date": lastTestRunData['data']['date']
+        "date": lastTestRunData['data']['date'],
     }
 
     data['skills_percent'] = calculateSkillsPercent(data['result_skills']);
@@ -66,19 +76,17 @@ export async function handleNotification(instances, userData, lastTestRunData, y
 
         let data = fillDataObject(lastTestRunData, year);
 
-        if (userData['email_status'] === 1)
-            sendEmail(instances['email'], userData['email'], data);
+        // if (userData['email_status'] === 1)
+        //     sendEmail(instances['email'], userData['email'], data);
 
         data['formated_status'] = getCompleteStatus(data['externalItems'], '\n');
         data['formated_norme'] = getCompleteNorme(data['externalItems'], '\n');
 
-        if (userData['phone_status'] === 1)
-            sendPushNotification(userData['phone_topic'], data);
+        // if (userData['phone_status'] === 1)
+        //     sendPushNotification(userData['phone_topic'], data);
         // if (userData['discord_status'] === 1)
-        //     sendDiscord(userData['channel_id'], userData['user_id'], lastTestRunData); // check if channel_id and user_id are not undefined
-        // if (userData['telegram_status'] === 1)
-        //     sendTelegram(userData['telegram_id'], lastTestRunData); // check if telegram_id is not undefined
-
+        await sendDiscord(instances['discord'], userData['channel_id'], userData['user_id'], data);
+        // await sendDiscord(instances['discord'], userData['channel_id'], userData['user_id'], data);
     } catch (err) {
         console.log(err);
     }
