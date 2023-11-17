@@ -1,20 +1,36 @@
 import { sendAPICall } from "../apiCall.js";
+import { sendNTFYCall } from "./push.js";
 import { calculateSkillsPercent, getCompleteNorme, getCompleteStatus, getCompleteUrl, getPercentColor } from "./getInformations.js";
 import { checkEmail } from "./utils.js";
 
 function sendEmail(emailInstance, email, data) {
     if (!email || checkEmail(email) === false)
         return;
+    console.log(email)
+    try {
+        emailInstance.sendEmail(
+            email,
+            data['skills_percent'],
+            data['skills_color'],
+            data['formated_url'],
+            data['project_name'],
+            data['formated_status'],
+            data['formated_norme']
+        );
+        console.log('Email sent');
+    } catch (error) {
+        console.error('Error when sending email:', error);
+    }
+}
 
-    emailInstance.sendEmail(
-        'thomas.ott@epitech.eu',
-        data['skills_percent'],
-        data['skills_color'],
-        data['formated_url'],
-        data['project_name'],
-        data['formated_status'],
-        data['formated_norme']
-    );
+
+function sendPushNotification(phoneTopic, data) {
+    try {
+        sendNTFYCall(phoneTopic, data['formated_url'], data['project_name'], data['skills_percent']);
+        console.log('Push notification sent');
+    } catch (error) {
+        console.error('Error when sending sms:', error);
+    }
 }
 
 export async function handleNotification(instances, userData, lastTestRunData, year) {
@@ -45,16 +61,15 @@ export async function handleNotification(instances, userData, lastTestRunData, y
         data['formated_status'] = getCompleteStatus(data['externalItems'], '<br>');
         data['formated_norme'] = getCompleteNorme(data['externalItems'], '<br>');
 
-
         if (userData['email_status'] === 1)
             sendEmail(instances['email'], userData['email'], data); // check if email is not undefined
         data['formated_status'] = getCompleteStatus(data['externalItems'], '\n');
         data['formated_norme'] = getCompleteNorme(data['externalItems'], '\n');
 
+        if (userData['phone_status'] === 1)
+            sendPushNotification(userData['phone_topic'], data); // check if phone number is not undefined
         // if (userData['discord_status'] === 1)
         //     sendDiscord(userData['channel_id'], userData['user_id'], lastTestRunData); // check if channel_id and user_id are not undefined
-        // if (userData['phone_status'] === 1)
-        //     sendSMS(userData['phone'], lastTestRunData); // check if phone number is not undefined
         // if (userData['telegram_status'] === 1)
         //     sendTelegram(userData['telegram_id'], lastTestRunData); // check if telegram_id is not undefined
 

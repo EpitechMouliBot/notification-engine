@@ -73,8 +73,6 @@ class EmailSender {
         this.transporter.sendMail(mailOptions, (err, rsp) => {
             if (err) {
                 console.error('Error when sending email:', err);
-            } else {
-                console.log('E-mail send !');
             }
         });
     }
