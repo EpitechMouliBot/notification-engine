@@ -13,3 +13,12 @@ export async function sendAPICall(method, endpoint, token = "", body = {}) {
         data: body
     });
 }
+
+export async function sendRELAYCall(method, endpoint) {
+    const callUrl = process.env.RELAY_DB_HOST + (endpoint[0] !== '/' ? '/' : '') + endpoint;
+    console.log("callUrl: ", callUrl);
+    return axios({
+        method: method,
+        url: callUrl
+    });
+}
