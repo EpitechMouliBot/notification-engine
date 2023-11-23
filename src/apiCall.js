@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 export async function sendAPICall(method, endpoint, token = "", body = {}) {
-    const callUrl = process.env.API_DB_HOST + (endpoint[0] !== '/' ? '/' : '') + endpoint;
+    const callUrl = process.env.API_DB_HOST + '/api' + (endpoint[0] !== '/' ? '/' : '') + endpoint;
 
     return axios({
         method: method,
@@ -15,7 +15,7 @@ export async function sendAPICall(method, endpoint, token = "", body = {}) {
 }
 
 export async function sendRELAYCall(method, endpoint) {
-    const callUrl = process.env.RELAY_DB_HOST + (endpoint[0] !== '/' ? '/' : '') + endpoint;
+    const callUrl = process.env.API_DB_HOST + '/relay' + (endpoint[0] !== '/' ? '/' : '') + endpoint;
     console.log("callUrl: ", callUrl);
     return axios({
         method: method,

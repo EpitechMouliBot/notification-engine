@@ -68,7 +68,7 @@ function fillDataObject(lastTestRunData, year) {
 
 export async function handleNotification(instances, userData, lastTestRunData, year) {
     try {
-        sendAPICall('PUT', `/user/id/${userInfo['id']}`, process.env.API_DB_TOKEN, {
+        sendAPICall('PUT', `/user/${userData['id']}`, process.env.API_DB_TOKEN, {
             'last_testRunId': lastTestRunData.id,
         }).catch((err) => {
             console.log(err);
