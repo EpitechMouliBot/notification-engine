@@ -20,7 +20,7 @@ const rest = new REST({ version: '10' }).setToken(token);
 
 (async () => {
     try {
-        log.info(`Started refreshing ${commands.length} application (/) commands.`);
+        console.log(`Started refreshing ${commands.length} application (/) commands.`);
 
             await rest.put(
                 Routes.applicationGuildCommands(clientId, guildId),
@@ -33,8 +33,8 @@ const rest = new REST({ version: '10' }).setToken(token);
             //     { body: commands },
             // );
 
-        log.info(`Successfully reloaded ${data.length} application (/) commands.`);
+        console.log(`Successfully reloaded ${data.length} application (/) commands.`);
     } catch (error) {
-        log.error(error.message);
+        console.error(error.message);
     }
 })();
