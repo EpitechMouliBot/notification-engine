@@ -68,7 +68,7 @@ function fillDataObject(lastTestRunData, year) {
 
 export async function handleNotification(instances, userData, lastTestRunData, year) {
     try {
-        sendAPICall('PUT', `/user/${userData['id']}`, process.env.API_DB_TOKEN, {
+        sendAPICall('PUT', `/user/id/${userData['id']}`, process.env.API_DB_TOKEN, {
             'last_testRunId': lastTestRunData.id,
         }).catch((err) => {
             console.log(err);
@@ -84,8 +84,8 @@ export async function handleNotification(instances, userData, lastTestRunData, y
 
         if (userData['phone_status'] === 1)
             sendPushNotification(userData['phone_topic'], data);
-        if (userData['discord_status'] === 1)
-        await sendDiscord(instances['discord'], userData['discord_channel_id'], userData['discord_user_id'], data);
+        // if (userData['discord_status'] === 1)
+        // await sendDiscord(instances['discord'], userData['discord_channel_id'], userData['discord_user_id'], data);
     } catch (err) {
         console.log(err);
     }

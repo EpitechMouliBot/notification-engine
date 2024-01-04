@@ -30,7 +30,9 @@ function setNotificationEmbed(data) {
 
 export async function sendDiscordNotification(discordInstance, channelId, userId, data) {
     try {
+        // const channel = await discordInstance.channels.fetch(channelId);
         const channel = await discordInstance.channels.fetch('974418168569274409');
+
 
         const embed = setNotificationEmbed(data);
         await channel.send({ content: `<@${userId}> New mouli !`, embeds: embed['embed'], files: embed['files'] });

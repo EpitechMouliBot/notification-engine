@@ -18,9 +18,9 @@ async function checkForOneUser(instances, userData, year) {
         .then(async (rsp) => {
             const relayData = rsp.data;
             const actualYear = new Date().getFullYear();
-
-            if (!relayData || (relayData.length < 1 && year >= actualYear - 6))
-                await checkForOneUser(userData, year - 1);
+            if (!relayData || (relayData.length < 1 && year >= actualYear - 6)) {
+                await checkForOneUser(instances, userData, year - 1);
+            }
 
             const lastTestRunData = getLastTestData(relayData);
             if (!lastTestRunData || lastTestRunData.id === 0 || !lastTestRunData.data ||
